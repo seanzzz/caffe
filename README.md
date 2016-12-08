@@ -1,3 +1,44 @@
+# Fine-tuning CaffeNet for Pet Breed Recognition
+
+We fine-tuned CaffeNet to discriminate dog and cat breeds using [The Oxford-IIIT Pet Dataset](http://www.robots.ox.ac.uk/~vgg/data/pets/). Our model achieved a ~79% accuracy, higher than the ~59% accuracy in the original paper.
+
+We evaluated the effect of learning rate, batch size, and additional layer on our loss and test accuracy.
+
+Here is an example of our prototxt that defines our hyper-parameters: 
+```
+net: "models/cats_and_dogs/train_val_batch_size_16.prototxt"
+test_iter: 60
+test_interval: 500
+base_lr: 0.001
+lr_policy: "step"
+gamma: 0.2
+stepsize: 2000
+display: 50
+max_iter: 10000
+momentum: 0.8
+weight_decay: 0.0005
+snapshot: 1000
+snapshot_prefix: "models/cats_and_dogs/train_val_batch_size_16.prototxt"
+```
+Our `test_iter` is set to `60` and `test_batch_size`(in train_val.prototxt) is set to `64` so that each test covers all ~3700 test data. We run a test every `500` iterations of training to check accuracy and loss. Our base learning rate is `0.001`, and we decrease our learning rate by a factor of `0.2` every `2000` iterations. We set our `delta` for the regularizer to be `0.0005`, and momentum to be `0.8`. We display the loss every `50` iterations, saves a snapshot for the model every `1000` iterations, and run a max of `10000` iterations.
+
+We use CaffeNet, a pre-trained model as our base model. We modified the last layer of CaffeNet from 1000 nodes to 37 nodes to the number of output for our problem. Below is a visualization of our model:
+
+![CatsNDogsNet](models/cats_and_dogs/cats_and_dogs.jpeg)
+
+
+For learning rate, we found out that freezing weights of all previous layers helps us to coverge much quicker. We also found out that a small learning rates (smaller than the flickr example) is helpful. It is possible that we might achieve a better result by finetuning weights in all layers if we train the model for a long time (and have more data), but initial result suggests that our accuracy decreases after `500` iterations if we do not freeze all layers but the last one.
+
+Our experiment on batch size did not show significant difference in test accuracy. While a large batch size converges quicker under the same number of iterations and learning rate, in our case it is mostly due to the number of examples our model has seen (`8000` iterations for batch size `4` = `500` iterations for batch size `64` in terms of number of examples seen).
+
+Finally, we do not see significant difference if the `37` node last layer simply replaces the original `1000` node last layer or is placed after the original last layer. 
+
+Our tools for preprocessing data and postprocessing result can be found under `/java`. Our model definition can be found under `/models/cats_and_dogs/`.
+
+
+
+Following is the original README:
+
 # Caffe
 
 [![Build Status](https://travis-ci.org/BVLC/caffe.svg?branch=master)](https://travis-ci.org/BVLC/caffe)
