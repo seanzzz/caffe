@@ -20,7 +20,7 @@ weight_decay: 0.0005
 snapshot: 1000
 snapshot_prefix: "models/cats_and_dogs/train_val_batch_size_16.prototxt"
 ```
-Our `test_iter` is set to `60` and `test_batch_size`(in train_val.prototxt) is set to `64` so that each test covers all ~3700 test data. We run a test every `500` iterations of training to check accuracy and loss. Our base learning rate is `0.001`, and we decrease our learning rate by a factor of `0.2` every `2000` iterations. We set our `delta` for the regularizer to be `0.0005`, and momentum to be `0.8`. We display the loss every `50` iterations, saves a snapshot for the model every `1000` iterations, and run a max of `10000` iterations.
+Our `test_iter` is set to `60` and `test_batch_size`(in train_val.prototxt) is set to `64` so that each test covers all ~3700 test data. We run a test every `500` iterations of training to check accuracy and loss. Our base learning rate is `0.001`, and we decrease our learning rate by a factor of `0.2` every `2000` iterations. We set our `delta` (or `weight_decay` for the regularizer to be `0.0005`, and momentum to be `0.8`. We display the training loss every `50` iterations, saves a snapshot for the model every `1000` iterations, and run a max of `10000` iterations.
 
 We use CaffeNet, a pre-trained model as our base model. We modified the last layer of CaffeNet from 1000 nodes to 37 nodes to the number of output for our problem. Below is a visualization of our model:
 
